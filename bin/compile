@@ -58,7 +58,7 @@ then
   fi
 fi
 # ELTOROit
-echo "-----> Executing `$BIN_DIR/deno install`"
+echo "-----> Executing deno install"
 $BIN_DIR/deno install
 
 echo "-----> Conditional Build Processes"
