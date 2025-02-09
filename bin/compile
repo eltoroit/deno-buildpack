@@ -58,7 +58,7 @@ then
   fi
 fi
 # ELTOROit
-deno install
+$BIN_DIR/deno install
 
 echo "-----> Conditional Build Processes"
 # This section determines which build process to run based on the presence of specific configuration files.
