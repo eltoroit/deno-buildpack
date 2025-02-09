@@ -2,6 +2,8 @@
 # bin/compile <build-dir> <cache-dir> <env-dir>
 # $HOME: /app
 
+echo "-----> Script Setup and Configuration"
+# This section defines essential variables and prepares the environment for the build process.
 set -e
 
 BUILD_DIR=${1:-.}
@@ -9,12 +11,14 @@ CACHE_DIR=${2:-}
 ENV_DIR=${3:-}
 
 HEROKU_DIR=$BUILD_DIR/.heroku
-BIN_DIR=$HEROKU_DIR/bin
+BIN_DIR=$HEROKU_DIR/bin      
 
 # To enable the local source build cache path, copy the files and match the build path with the startup path.
 cp -rpT $BUILD_DIR $HOME
 cd $HOME
 
+echo "-----> Deno Installation and Version Handling"
+# This section installs Deno and configures the environment to use it.
 if [ -f runtime.txt ]
 then
   INSTALL_VERSION_OPTION="-s $(cat runtime.txt)"
@@ -26,12 +30,16 @@ export DENO_INSTALL=$BUILD_DIR/.heroku
 export DENO_DIR=$BUILD_DIR/.heroku/cache
 curl -fsSL https://deno.land/x/install/install.sh | sh $INSTALL_VERSION_OPTION
 
-# set environment variables
+
+echo "-----> Environment Variables Setup"
+# Sets up environment variables for Deno to ensure it runs correctly in the Heroku environment.
 PROFILE_PATH="$BUILD_DIR/.profile.d/deno.sh"
 mkdir -p $(dirname $PROFILE_PATH)
 echo 'export PATH="$HOME/.heroku/bin:$PATH"' >> $PROFILE_PATH
 echo 'export DENO_DIR="$HOME/.heroku/cache"' >> $PROFILE_PATH
 
+echo "-----> Dependency Management and Build Execution"
+# This section handles dependency installation and executes the build process based on the project type.
 set +e
 
 # download dependencies
@@ -49,7 +57,11 @@ then
     fi
   fi
 fi
+# ELTOROit
+deno install
 
+echo "-----> Conditional Build Processes"
+# This section determines which build process to run based on the presence of specific configuration files.
 if [ -f heroku_build.ts ]
 then
   #
@@ -68,4 +80,3 @@ then
   $BIN_DIR/deno run --allow-net=deno.land ${ALEPH_PATH}cli.ts start --help > /dev/null
   cp -rp .aleph $BUILD_DIR/.
 fi
-

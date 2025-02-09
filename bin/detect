@@ -1,7 +1,9 @@
-#!/usr/bin/env bash
-# bin/detect <build-dir>
+#!/bin/sh
 
-
-exit 0
-
-
+# this pack is valid for apps with a deno.json in the root
+if [ -f $1/deno.json ]; then
+  echo "Hello Deno"
+  exit 0
+else
+  exit 1
+fi
